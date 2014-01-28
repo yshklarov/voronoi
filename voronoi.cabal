@@ -1,0 +1,13 @@
+name:                voronoi
+version:             0.0
+synopsis:            View random voronoi diagrams
+author:              Yakov Shklarov
+maintainer:          yshklarov@gmail.com
+license:             PublicDomain
+license-file:        LICENSE
+build-type:          Simple
+cabal-version:       >=1.8
+
+executable voronoi
+  build-depends:     gd, random, base ==4.*
+  main-is:           voronoi.hs
