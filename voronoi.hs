@@ -14,17 +14,18 @@ type Site = (Point, Color)
 
 imgsize = (600, 400)
 numpoints = 20
-sitecolor = (rgb 0 0 0)  -- black
-outlinecolor = (rgb 255 0 0)  -- red
+sitecolor = rgb 0 0 0  -- black
+outlinecolor = rgb 255 0 0  -- red
 sitediam = 3
 outlinediam = 5
 
 
 main = do
     args <- getArgs
-    let norm = if args == [] then norm2
-               else if head args == "i" then normI
-               else normL $ read $ head args
+    let norm
+          | args == []       = norm2
+          | head args == "i" = normI
+          | otherwise        = normL $ read $ head args
     sites <- randomSites numpoints
     im <- newImage imgsize
     plotRegions im (closest norm sites)
@@ -40,7 +41,7 @@ main = do
 
 plotRegions :: Image -> (Point -> Site) -> IO ()
 plotRegions im closestTo = do
-    mapM (\(p, c) -> setPixel p c im) cpoints
+    mapM_ (\(p, c) -> setPixel p c im) cpoints
     return ()
   where
     points = [(x, y) | x <- [0..fst imgsize - 1], y <- [0..snd imgsize - 1]]
@@ -49,7 +50,7 @@ plotRegions im closestTo = do
 
 plotSites :: Image -> [Site] -> IO ()
 plotSites im sites = do
-    mapM (\(p, c) -> makeDot p) sites
+    mapM_ (\(p, c) -> makeDot p) sites
     return ()
   where
     makeDot p = do
@@ -79,7 +80,7 @@ norm2 p = sqrt (fromIntegral (dx^2 + dy^2))
 
 -- Other norms. Eg. l1 is the "Manhattan" norm.
 normL :: Double -> Point -> Double
-normL n p = (((abs dx) ** n) + ((abs dy) ** n)) ** (1 / n)
+normL n p = ((abs dx ** n) + (abs dy ** n)) ** (1 / n)
   where (dxi, dyi) = p
         (dx, dy) = (fromIntegral dxi, fromIntegral dyi)
 
