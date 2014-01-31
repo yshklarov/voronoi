@@ -25,7 +25,9 @@ main = do
     let norm
           | args == []       = norm2
           | head args == "i" = normI
-          | otherwise        = normL $ read $ head args
+          | n >= 1           = normL n
+          | otherwise        = error $ show n ++ " is less than 1: Not a valid norm."
+              where n = read $ head args
     sites <- randomSites numpoints
     im <- newImage imgsize
     plotRegions im (closest norm sites)
@@ -78,11 +80,14 @@ norm2 :: Point -> Double
 norm2 p = sqrt (fromIntegral (dx^2 + dy^2))
   where (dx, dy) = p
 
--- Other norms. Eg. l1 is the "Manhattan" norm.
+-- Other norms. Eg. l1 is the "Manhattan" or "taxicab" norm.
+-- Defined only for n >= 1.
 normL :: Double -> Point -> Double
-normL n p = ((abs dx ** n) + (abs dy ** n)) ** (1 / n)
-  where (dxi, dyi) = p
-        (dx, dy) = (fromIntegral dxi, fromIntegral dyi)
+normL n p
+  | n == 1 = abs dx + abs dy
+  | n > 1  = ((abs dx ** n) + (abs dy ** n)) ** (1 / n)
+      where (dxi, dyi) = p
+            (dx, dy) = (fromIntegral dxi, fromIntegral dyi)
 
 -- l-inf. norm
 normI :: Point -> Double
